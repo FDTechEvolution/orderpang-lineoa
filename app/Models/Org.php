@@ -4,23 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\Uuids;
 
-class Register extends Model
+class Org extends Model
 {
-    use HasFactory;
+    use HasFactory, Uuids;
 
     protected $fillable = [
+        'orgid',
         'name',
-        'line_profile',
-        'line_userid',
+        'line_notify_token',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
-        
+        'status'
     ];
 }

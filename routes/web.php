@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrgController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/orgs', [OrgController::class, 'index']);
+Route::post('/org-create', [OrgController::class, 'create']);
+Route::post('/org-edit', [OrgController::class, 'update']);
+Route::post('/org-delete', [OrgController::class, 'delete']);

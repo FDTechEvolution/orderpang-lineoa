@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRegistersTable extends Migration
+class CreateOrgsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateRegistersTable extends Migration
      */
     public function up()
     {
-        Schema::create('registers', function (Blueprint $table) {
-            $table->id();
+        Schema::create('orgs', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('orgid');
             $table->string('name');
-            $table->string('line_profile');
-            $table->string('line_userid');
+            $table->string('line_notify_token')->nullable();
+            $table->enum('status', ['ACTIVE', 'INACTIVE'])->default('ACTIVE')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +30,6 @@ class CreateRegistersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('registers');
+        Schema::dropIfExists('orgs');
     }
 }
