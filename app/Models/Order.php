@@ -11,6 +11,7 @@ class Order extends Model
     use HasFactory, Uuids;
 
     protected $fillable = [
+        'id',
         'user_id',
         'body',
         'payment_method',
@@ -20,6 +21,11 @@ class Order extends Model
 
     protected $hidden = [
         'user_id',
-        'status'
+        'updated_at'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

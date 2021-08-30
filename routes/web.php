@@ -19,6 +19,9 @@ Route::get('/', function () {
 });
 
 Route::get('/orgs', [OrgController::class, 'index']);
+Route::get('/orgs/restore', [OrgController::class, 'restore']);
+
 Route::post('/org-create', [OrgController::class, 'create']);
 Route::post('/org-edit', [OrgController::class, 'update']);
 Route::post('/org-delete', [OrgController::class, 'delete']);
+Route::post('/org-restore', [OrgController::class, 'patch']);

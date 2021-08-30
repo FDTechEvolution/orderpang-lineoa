@@ -12,23 +12,30 @@ use App\Http\Controllers\Api\V1\LineNotifyController as LINE;
 // Models
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Org;
 
 class ManagementController extends Controller
 {
     public function register($orgid, $userId)
     {
         $user = $this->getUser($userId);
-        if(!$user) {
-            $profile = $this->getProfile($userId);
-            User::create([
-                'orgid' => $orgid,
-                'name' => $profile['displayName'],
-                'line_name' => $profile['displayName'],
-                'line_profile' => $profile['pictureUrl'],
-                'line_userid' => $userId
-            ]);
+        $org = $this->getOrg($orgid);
 
-            return 'ได้รับข้อมูลแล้ว กรุณาแจ้งผู้ดูแลระบบเพื่อดำเนินการต่อ';
+        if(!$user) {
+            if($org) {
+                $profile = $this->getProfile($userId);
+                User::create([
+                    'orgid' => $orgid,
+                    'name' => $profile['displayName'],
+                    'line_name' => $profile['displayName'],
+                    'line_profile' => $profile['pictureUrl'],
+                    'line_userid' => $userId
+                ]);
+    
+                return 'ได้รับข้อมูลแล้ว กรุณาแจ้งผู้ดูแลระบบเพื่อดำเนินการต่อ';
+            }
+            
+            return 'ไม่มี '.$orgid.' นี้ อยู่ในระบบ!';
         }else{
             if($user->status == 'INACTIVE') {
                 User::where('line_userid', $userId)->update(['status' => 'NEW']);
@@ -44,11 +51,9 @@ class ManagementController extends Controller
     {
         $user = $this->getUser($userId);
         if($user) {
-            if($this->checkPaymentMethod($body) == 'NULL') return 'รูปแบบการชำระเงินไม่ถูกต้อง กรุราตรวจสอบ!';
+            if($this->checkPaymentMethod($body) == 'NULL') return 'รูปแบบการชำระเงินไม่ถูกต้อง กรุณาตรวจสอบ!';
 
-            $subcode = date('ymd-His');
-            $submillisec = substr(date('U'), 0,3);
-            $code = $subcode.'-'.$submillisec;
+            $code = $this->codeGenerate();
             $order = Order::create([
                         'user_id' => $user->id,
                         'body' => $body,
@@ -85,10 +90,12 @@ class ManagementController extends Controller
     public function voiceOrder($code)
     {
         $order = Order::where('code', $code)->first();
+        $user = User::find($order->user_id);
+        $org = $this->getOrg($user->orgid);
         if($order) {
             if($order->status == 'DR') {
                 $order->update(['status' => 'VO']);
-                $this->sendNotify('รายการสั่งซื้อ รหัส : '.$code.' ถูกยกเลิก', env('LINE_NOTIFY_TOKEN_TEST'));
+                $this->sendNotify('รายการสั่งซื้อ รหัส : '.$code.' ถูกยกเลิก', $org->line_notify_token);
                 return 'ยกเลิกรายการสั่งซื้อ รหัส : '.$code.' เรียบร้อยแล้ว';
             } else if($order->status == 'CO') {
                 return 'รายการสั่งซื้อ รหัส : '.$code.' ถูกยืนยันไปแล้ว ไม่สามารถยกเลิกได้';
@@ -107,6 +114,12 @@ class ManagementController extends Controller
     private function getUser($userId)
     {
         return User::where('line_userid', $userId)->first();
+    }
+
+
+    private function getOrg($orgid)
+    {
+        return Org::where('orgid', $orgid)->where('status', 'ACTIVE')->first();
     }
 
 
@@ -134,5 +147,15 @@ class ManagementController extends Controller
     private function sendNotify($message, $token)
     {
         (new LINE)->sendMessage($message, $token);
+    }
+
+    private function codeGenerate()
+    {
+        $subcode = date('ymd-His');
+        $t = microtime(true);
+        $micro = sprintf("%06d",($t - floor($t)) * 1000000);
+        $submillisec = substr(date($micro, $t), 0,3);
+        $code = $subcode.'-'.$submillisec;
+        return $code;
     }
 }

@@ -6,6 +6,12 @@
 
         <title>Orgs Orderpang LineOA</title>
 
+        <!-- Disable Google Bot -->
+        <meta name="Googlebot-News" content="noindex, nofollow">
+        <meta name="googlebot" content="noindex, nofollow">
+        <meta name="robots" content="noindex, nofollow">
+        <meta name="robots" content="noimageindex">
+
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -33,6 +39,9 @@
                 <button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#addOrgModal">
                     เพิ่ม Org
                 </button>
+                <a href="{{ url('/orgs/restore') }}" class="btn btn-info my-3">
+                    กู้คืน Org
+                </a>
                 <table class="table">
                     <thead>
                         <tr>

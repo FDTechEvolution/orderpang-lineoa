@@ -35,9 +35,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'id',
-        'orgid',
-        'line_userid',
-        'status'
+        'updated_at',
     ];
 
     /**
@@ -48,4 +46,9 @@ class User extends Authenticatable
     // protected $casts = [
     //     'email_verified_at' => 'datetime',
     // ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }
