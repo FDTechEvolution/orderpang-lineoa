@@ -30,7 +30,7 @@ Route::prefix('v1')->group(function () {
 
 Route::prefix('v2')->group(function () {
     Route::prefix('user')->group(function () {
-        Route::get('{orgid}/{status?}', [UserService::class, 'getUserByStatus']);
+        Route::get('orgid/{orgid}/{status?}', [UserService::class, 'getUserByStatus']);
         Route::get('line/{line_userid}', [UserService::class, 'getUserBylineUserId']);
 
         Route::post('update', [UserService::class, 'updateUser']);
