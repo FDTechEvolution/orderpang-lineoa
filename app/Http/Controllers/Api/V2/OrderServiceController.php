@@ -17,7 +17,7 @@ class OrderServiceController extends Controller
             $orders = [];
             if($status != null) {
                 foreach($users as $user) {
-                    $order = Order::with('user:id,name')->where('user_id', $user->id)->where('status', $status)->get();
+                    $order = Order::with('user:id,name,line_name,line_userid')->where('user_id', $user->id)->where('status', $status)->get();
                     if(sizeof($order) > 0) {
                         foreach($order as $item) {
                             array_push($orders, $item);
